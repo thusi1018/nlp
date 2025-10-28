@@ -1,0 +1,58 @@
+!pip install nltk scikit-learn spacy
+import math
+import re
+from collections import Counter
+
+
+documents = [
+    "The sun is shining brightly today.",
+    "A bright sun brings happiness.",
+    "The cat is sleeping on the mat.",
+    "A cat and a dog are good friends."
+]
+
+
+def preprocess(text):
+
+    return re.findall(r'\b\w+\b', text.lower())
+
+processed_docs = [preprocess(doc) for doc in documents]
+
+
+def compute_tf(doc_words):
+
+    total_words = len(doc_words)
+    counts = Counter(doc_words)
+    return {word: count / total_words for word, count in counts.items()}
+
+
+def compute_idf(processed_docs):
+
+    N = len(processed_docs)
+    all_words = set(word for doc in processed_docs for word in doc)
+    idf_scores = {}
+    for word in all_words:
+        docs_with_word = sum(1 for doc in processed_docs if word in doc)
+
+        idf_scores[word] = math.log((N + 1) / (docs_with_word + 1)) + 1
+    return idf_scores
+
+
+def compute_tfidf(processed_docs):
+
+    idf_scores = compute_idf(processed_docs)
+    tfidf_docs = []
+    for doc in processed_docs:
+        tf_scores = compute_tf(doc)
+        tfidf_doc = {word: tf_scores[word] * idf_scores[word] for word in doc}
+        tfidf_docs.append(tfidf_doc)
+    return tfidf_docs
+
+tfidf_results = compute_tfidf(processed_docs)
+
+print("\n--- TF-IDF Scores (From Scratch) ---")
+for i, doc_scores in enumerate(tfidf_results):
+    print(f"\nDocument {i+1}:")
+    sorted_scores = sorted(doc_scores.items(), key=lambda x: x[1], reverse=True)
+    for word, score in sorted_scores:
+        print(f"  {word:10s} -> {score:.4f}")
