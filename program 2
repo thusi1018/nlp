@@ -20,18 +20,17 @@ text = "Apple Inc. was founded by Steve Jobs. Google and Microsoft are tech gian
 print("Original Text:")
 print(text, "\n")
 
-# ===================================================================
 # 1. TOKENIZATION
-# ===================================================================
+
 print("1. TOKENIZATION:")
 words = word_tokenize(text)
 sentences = sent_tokenize(text)
 print(f"Words: {words[:10]}")
 print(f"Sentences: {sentences}\n")
 
-# ===================================================================
+
 # 2. STEMMING & LEMMATIZATION
-# ===================================================================
+
 print("2. STEMMING & LEMMATIZATION:")
 stemmer = PorterStemmer()
 lemmatizer = WordNetLemmatizer()
@@ -41,9 +40,9 @@ for word in sample_words:
     print(f"{word} → Stem: {stemmer.stem(word)}, Lemma: {lemmatizer.lemmatize(word)}")
 print()
 
-# ===================================================================
+
 # 3. SCIKIT-LEARN (TF-IDF)
-# ===================================================================
+
 print("3. SCIKIT-LEARN TF-IDF:")
 docs = ["Python is great", "NLP is amazing", "Machine learning rocks"]
 vectorizer = TfidfVectorizer()
@@ -51,9 +50,9 @@ tfidf = vectorizer.fit_transform(docs)
 print(f"Features: {vectorizer.get_feature_names_out()}")
 print(f"Matrix shape: {tfidf.shape}\n")
 
-# ===================================================================
+
 # 4. SPACY (POS & NER)
-# ===================================================================
+
 print("4. SPACY - POS & NER:")
 nlp = spacy.load('en_core_web_sm')
 doc = nlp(text)
@@ -67,9 +66,9 @@ for ent in doc.ents:
     print(f"  {ent.text} → {ent.label_}")
 print()
 
-# ===================================================================
+
 # 5. WORD CLOUD
-# ===================================================================
+
 print("5. WORD CLOUD:")
 wordcloud = WordCloud(width=600, height=300, background_color='white').generate(text)
 plt.figure(figsize=(10, 5))
@@ -81,9 +80,9 @@ plt.savefig('wordcloud.png', dpi=150)
 plt.show()
 print(" Word cloud saved!\n")
 
-# ===================================================================
+
 # 6. SENTENCE SEGMENTATION
-# ===================================================================
+
 print("6. SENTENCE SEGMENTATION:")
 for i, sent in enumerate(sentences, 1):
     print(f"  Sentence {i}: {sent}")
