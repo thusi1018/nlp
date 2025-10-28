@@ -1,0 +1,106 @@
+
+
+!pip install scikit-learn pandas numpy matplotlib seaborn
+
+
+# IMPORT LIBRARIES
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+
+# STEP 1: CREATE OR LOAD TEXT DATA
+
+texts = [
+    "I love this product, it’s fantastic!",
+    "This is the worst thing I have ever bought.",
+    "Amazing quality and great value.",
+    "Terrible experience, would not recommend.",
+    "Excellent service and wonderful staff!",
+    "Completely useless and disappointing.",
+    "Best purchase I’ve made this year.",
+    "Horrible customer service, very bad.",
+    "Totally worth the price.",
+    "Waste of money, never again."
+]
+
+labels = [
+    "positive", "negative", "positive", "negative", "positive",
+    "negative", "positive", "negative", "positive", "negative"
+]
+
+# Create DataFrame
+df = pd.DataFrame({"text": texts, "label": labels})
+print("Dataset loaded successfully!\n")
+print(df)
+
+
+# STEP 2: SPLIT INTO TRAIN AND TEST SETS
+
+X_train, X_test, y_train, y_test = train_test_split(
+    df["text"], df["label"], test_size=0.3, random_state=42
+)
+print(f"\nTraining samples: {len(X_train)} | Testing samples: {len(X_test)}")
+
+
+# STEP 3: FEATURE EXTRACTION (TF-IDF)
+
+vectorizer = TfidfVectorizer(stop_words="english")
+X_train_tfidf = vectorizer.fit_transform(X_train)
+X_test_tfidf = vectorizer.transform(X_test)
+
+print(f"\nTF-IDF vocabulary size: {len(vectorizer.get_feature_names_out())}")
+
+
+# STEP 4: TRAIN NAÏVE BAYES CLASSIFIER
+
+model = MultinomialNB()
+model.fit(X_train_tfidf, y_train)
+print("\nModel trained successfully!")
+
+
+# STEP 5: EVALUATE MODEL
+
+y_pred = model.predict(X_test_tfidf)
+
+accuracy = accuracy_score(y_test, y_pred)
+print(f"\nModel Accuracy: {accuracy:.2%}\n")
+
+print("Classification Report:")
+print(classification_report(y_test, y_pred))
+
+print("Confusion Matrix:")
+cm = confusion_matrix(y_test, y_pred)
+sns.heatmap(cm, annot=True, fmt="d", cmap="Blues",
+            xticklabels=model.classes_,
+            yticklabels=model.classes_)
+plt.title("Confusion Matrix")
+plt.xlabel("Predicted")
+plt.ylabel("Actual")
+plt.show()
+
+
+# STEP 6: TEST NEW SENTENCES
+
+new_texts = [
+    "This product is absolutely wonderful!",
+    "Very poor quality, I hate it.",
+    "Not bad, but could be better."
+]
+
+new_tfidf = vectorizer.transform(new_texts)
+predictions = model.predict(new_tfidf)
+probabilities = model.predict_proba(new_tfidf)
+
+print("\n" + "="*60)
+print("PREDICTIONS ON NEW TEXTS")
+print("="*60)
+for text, pred, prob in zip(new_texts, predictions, probabilities):
+    print(f"\nText: '{text}'")
+    print(f"Predicted Sentiment: {pred}")
+    print(f"Confidence: {max(prob)*100:.1f}%")
