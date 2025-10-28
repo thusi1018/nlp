@@ -1,0 +1,57 @@
+!pip install pandas scikit-learn
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import accuracy_score, classification_report
+
+# Sample dataset
+data = pd.DataFrame({
+    'text': [
+        'Free entry in 2 a wkly comp to win FA cup final tickets',
+        'ok lar... joking wif u oni...',
+        'WINNER!! valued network customer selected to receive a prize',
+        'Have a great weekend with your family',
+        'URGENT! You have won a 1 week FREE membership',
+        'You are a lucky winner! claim your cash now',
+        'Hey, how was your meeting today?',
+        'Call me when you reach home safely',
+        'Congratulations, you have been selected for a free trip',
+        'Let’s meet tomorrow at 5 PM',
+        'You won 1000 dollars! click the link to claim',
+        'Are you coming to class today?',
+        'Get free bonus points by joining now',
+        'I will message you later tonight',
+        'Exclusive offer just for you, don’t miss out!'
+    ],
+    'label': [
+        'spam', 'ham', 'spam', 'ham', 'spam',
+        'spam', 'ham', 'ham', 'spam', 'ham',
+        'spam', 'ham', 'spam', 'ham', 'spam'
+    ]
+})
+
+x=data['text']
+y=data['label']
+y_num=y.map({'ham':0,'spam':1})
+
+X_train, X_test, y_train, y_test = train_test_split(
+    data['text'], data['label'], test_size=0.4, random_state=42
+)
+
+
+
+vectorizer=CountVectorizer(stop_words='english')
+x_train_vect = vectorizer.fit_transform(X_train)
+x_test_vect = vectorizer.transform(X_test)
+
+
+nb = MultinomialNB()
+nb.fit(x_train_vect, y_train)
+
+
+y_pred = nb.predict(x_test_vect)
+
+
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print("\nClassification Report:\n", classification_report(y_test, y_pred))
