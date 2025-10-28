@@ -1,0 +1,30 @@
+!pip install pandas scikit-learn nltk spacy
+import nltk
+from nltk.tokenize import word_tokenize, sent_tokenize
+from nltk.corpus import stopwords
+from nltk import ne_chunk 
+from nltk.stem import PorterStemmer, SnowballStemmer, LancasterStemmer, RegexpStemmer
+from nltk import pos_tag
+
+nltk.download('punkt')
+print(nltk.data.find('tokenizers/punkt')) 
+rhymes = """Twinkle, twinkle, little star, How I wonder what you are! Up above the world so high, Like a diamond in the sky. """ 
+nltk.download('punkt_tab')
+tokens = word_tokenize(rhymes) 
+porter = PorterStemmer() 
+snowball = SnowballStemmer('english') 
+lancaster = LancasterStemmer() 
+regex_stemmer = RegexpStemmer('ing$|s$|e$', min=4)
+porter_stems = [porter.stem(word) for word in tokens]
+snowball_stems = [snowball.stem(word) for word in tokens] 
+lancaster_stems = [lancaster.stem(word) for word in tokens] 
+regex_stems = [regex_stemmer.stem(word) for word in tokens]
+print("Original:", tokens)
+print("Porter stems:", porter_stems) 
+print("Snowball stems:", snowball_stems) 
+print("Lancaster stems:", lancaster_stems)
+print("Regex stems:", regex_stems)
+sentences = nltk.sent_tokenize(rhymes)
+print("Segmented Sentences:")
+for i, sentence in enumerate(sentences):
+  print(f"{i+1}: {sentence}") 
